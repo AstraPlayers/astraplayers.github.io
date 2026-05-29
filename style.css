@@ -1,0 +1,180 @@
+/* --- Reset et Configuration de base --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #12053B; /* Ton bleu foncé en fond principal */
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* --- Arrière-plan : Des bulles éclatantes et bien visibles --- */
+.bulla-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: #12053B;
+    pointer-events: none;
+}
+
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(30px); /* Blur réduit pour garder la forme de bulle bien visible */
+    opacity: 0.8;       /* Augmenté pour une forte visibilité */
+    will-change: transform;
+}
+
+/* Bulle Bleue Éclatante (à droite) */
+.bubble-1 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle at 40% 40%, #2563eb 0%, #12053B 80%);
+    top: 10%;
+    right: 10%;
+    animation: float-blue 20s infinite ease-in-out;
+}
+
+/* Bulle Violette Éclatante (à gauche) */
+.bubble-2 {
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle at 40% 40%, #7c3aed 0%, #33004F 80%);
+    bottom: 15%;
+    left: 15%;
+    animation: float-purple 25s infinite ease-in-out;
+}
+
+/* Animations de flottaison douce */
+@keyframes float-blue {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-40px, 30px) scale(1.05); }
+}
+
+@keyframes float-purple {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, -40px) scale(1.08); }
+}
+
+/* --- Structure du Header --- */
+.main-header {
+    background-color: #12053B;
+    width: 100%;
+    padding: 15px 0;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column; /* Aligne le logo au-dessus du menu comme sur l'image */
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+}
+
+.site-logo {
+    height: 75px; /* Taille idéale pour la visibilité du logo manette/fusée */
+    width: auto;
+    display: block;
+}
+
+.nav-links {
+    display: flex;
+    gap: 25px;
+}
+
+.nav-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    opacity: 0.85;
+    transition: opacity 0.3s, color 0.3s;
+}
+
+.nav-links a:hover {
+    opacity: 1;
+    color: #a78bfa;
+}
+
+/* --- Zone Centrale avec effet Verre Givré (Glassmorphism) --- */
+.content-area {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.hero {
+    max-width: 650px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.07); /* Fond blanc ultra-léger pour le reflet */
+    backdrop-filter: blur(15px);          /* Effet flouté derrière le verre */
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Bordure fine brillante */
+    border-radius: 24px;                  /* Coins bien arrondis */
+    padding: 50px 40px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+}
+
+.hero h1 {
+    font-size: 2.4rem;
+    margin-bottom: 20px;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.hero p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #e2e8f0;
+    margin-bottom: 35px;
+    opacity: 0.9;
+}
+
+/* Bouton YouTube rouge dégradé avec lueur */
+.btn-youtube {
+    display: inline-block;
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+    color: #ffffff;
+    padding: 14px 40px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-youtube:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(220, 38, 38, 0.6);
+}
+
+/* --- Pied de page (Footer) --- */
+.main-footer {
+    background-color: #33004F; /* Ton violet sombre */
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    padding: 20px;
+    font-size: 0.95rem;
+    margin-top: auto;
+}
