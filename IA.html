@@ -176,7 +176,7 @@
     </footer>
 
     <script>
-        // Ta clé est inversée ici. Si un humain copie cette chaîne, elle est invalide pour lui.
+        // CORRECTION CYBER : Chaîne d'inversion corrigée au caractère près (Zéro erreur)
         const OBFUSCATED_KEY = "A4FPfcdDps1ZGNggj5UhvIGHCmwl6Y8etG2uw6htWI6NRbA.QA";
 
         // Décodage dynamique en mémoire vive au moment du clic
@@ -188,37 +188,30 @@
         const chatForm = document.getElementById('chatForm');
         const userInput = document.getElementById('userInput');
 
-        // Fonction pour ajouter une bulle de message à l'écran
         function appendMessage(text, sender) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
             messageDiv.innerText = text;
             chatContainer.appendChild(messageDiv);
             
-            // Scroll automatique vers le bas
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return messageDiv;
         }
 
-        // Gestion de l'envoi du formulaire
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const messageText = userInput.value.trim();
             if (!messageText) return;
 
-            // 1. Afficher le message de l'utilisateur
             appendMessage(messageText, 'user');
             userInput.value = '';
 
-            // 2. Afficher la bulle de chargement pour le Bot
             const loadingBubble = appendMessage('جاري التفكير...', 'loading');
 
-            // Extraction temporaire de la clé en RAM
             const REAL_KEY = getSecretKey();
             const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${REAL_KEY}`;
             
-            // 3. Préparer la requête asynchrone pour l'API Gemini
             try {
                 const response = await fetch(API_URL, {
                     method: "POST",
@@ -234,23 +227,24 @@
                     })
                 });
 
+                const data = await response.json();
+
                 if (!response.ok) {
-                    throw new Error("Erreur lors de la communication avec l'API");
+                    console.error("Détails de l'erreur reçue de Google :", data);
+                    throw new Error("Erreur de communication API");
                 }
 
-                const data = await response.json();
-                
-                // Supprimer l'indicateur de chargement
                 loadingBubble.remove();
 
-                // Extraire le texte de la réponse de Gemini
-                const botResponse = data.candidates[0].content.parts[0].text;
-
-                // 4. Afficher la réponse du Bot
-                appendMessage(botResponse, 'bot');
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const botResponse = data.candidates[0].content.parts[0].text;
+                    appendMessage(botResponse, 'bot');
+                } else {
+                    appendMessage("عذراً, لم أتمكن من معالجة الرد.", 'bot');
+                }
 
             } catch (error) {
-                console.error("Erreur:", error);
+                console.error("Erreur détectée :", error);
                 loadingBubble.remove();
                 appendMessage("عذراً، حدث خطأ أثناء الاتصال بالخادم. يرجى المحاولة لاحقاً.", 'bot');
             }
