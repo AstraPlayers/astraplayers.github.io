@@ -62,7 +62,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Message de l'utilisateur (à droite en arabe, donc ici aligné à gauche visuellement ou selon le dir) */
+        /* Message de l'utilisateur (à droite en arabe) */
         .message.user {
             background: linear-gradient(135deg, #33004F, #4c1d95);
             color: white;
@@ -176,40 +176,38 @@
     </footer>
 
     <script>
-        // Utilisation d'une méthode d'obfuscation par tableau de caractères pour éviter les décalages d'encodage
-        const KEY_PARTS = ["AQ", ".", "Ab8RN6IWth6wu2yGte38Y6IwmCHGIvhU5jggNZG1spDdcfPF4A"];
-
-        function getSecretKey() {
-            return KEY_PARTS.join('');
-        }
-
         const chatContainer = document.getElementById('chatContainer');
         const chatForm = document.getElementById('chatForm');
         const userInput = document.getElementById('userInput');
 
+        // Fonction pour ajouter une bulle de message à l'écran
         function appendMessage(text, sender) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
             messageDiv.innerText = text;
             chatContainer.appendChild(messageDiv);
             
+            // Scroll automatique vers le bas
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return messageDiv;
         }
 
+        // Gestion de l'envoi du formulaire
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const messageText = userInput.value.trim();
             if (!messageText) return;
 
+            // 1. Afficher le message de l'utilisateur
             appendMessage(messageText, 'user');
             userInput.value = '';
 
+            // 2. Afficher la bulle de chargement pour le Bot
             const loadingBubble = appendMessage('جاري التفكير...', 'loading');
 
-            const REAL_KEY = getSecretKey();
-            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${REAL_KEY}`;
+            // API endpoint public et gratuit de Pollinations (Pas besoin de clé !)
+            const API_URL = "https://text.pollinations.ai/";
             
             try {
                 const response = await fetch(API_URL, {
@@ -218,29 +216,33 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `Tu es AstraBot, un assistant IA intelligent et amical pour la communauté gaming "AstraPlayers". Réponds de manière concise, cool et directement en langue arabe à la demande suivante : ${messageText}`
-                            }]
-                        }]
+                        messages: [
+                            {
+                                role: "system",
+                                content: "Tu es AstraBot, un assistant IA intelligent, cool et amical pour la communauté gaming 'AstraPlayers'. Réponds directement, de manière fluide et uniquement en langue arabe."
+                            },
+                            {
+                                role: "user",
+                                content: messageText
+                            }
+                        ],
+                        model: "openai", // Utilisation de leur modèle de texte optimisé
+                        private: true
                     })
                 });
 
-                const data = await response.json();
-
                 if (!response.ok) {
-                    console.error("Détails de l'erreur reçue de Google :", data);
-                    throw new Error("Erreur de communication API");
+                    throw new Error("Erreur de réponse du serveur Pollinations");
                 }
 
+                // Pollinations renvoie directement la réponse sous forme de texte brut
+                const botResponse = await response.text();
+
+                // Supprimer l'indicateur de chargement
                 loadingBubble.remove();
 
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    const botResponse = data.candidates[0].content.parts[0].text;
-                    appendMessage(botResponse, 'bot');
-                } else {
-                    appendMessage("عذراً, لم أتمكن من معالجة الرد.", 'bot');
-                }
+                // 3. Afficher la réponse de l'IA
+                appendMessage(botResponse, 'bot');
 
             } catch (error) {
                 console.error("Erreur détectée :", error);
