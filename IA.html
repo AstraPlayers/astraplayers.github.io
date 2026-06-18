@@ -176,12 +176,11 @@
     </footer>
 
     <script>
-        // CORRECTION CYBER : Chaîne d'inversion corrigée au caractère près (Zéro erreur)
-        const OBFUSCATED_KEY = "A4FPfcdDps1ZGNggj5UhvIGHCmwl6Y8etG2uw6htWI6NRbA.QA";
+        // Utilisation d'une méthode d'obfuscation par tableau de caractères pour éviter les décalages d'encodage
+        const KEY_PARTS = ["AQ", ".", "Ab8RN6IWth6wu2yGte38Y6IwmCHGIvhU5jggNZG1spDdcfPF4A"];
 
-        // Décodage dynamique en mémoire vive au moment du clic
         function getSecretKey() {
-            return OBFUSCATED_KEY.split('').reverse().join('');
+            return KEY_PARTS.join('');
         }
 
         const chatContainer = document.getElementById('chatContainer');
