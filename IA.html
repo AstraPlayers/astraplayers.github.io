@@ -216,8 +216,8 @@
 
             // Extraction temporaire de la clé en RAM
             const REAL_KEY = getSecretKey();
-            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${REAL_KEY}`;
-
+            const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${REAL_KEY}`;
+            
             // 3. Préparer la requête asynchrone pour l'API Gemini
             try {
                 const response = await fetch(API_URL, {
