@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AstraBot - الذكاء الاصطناعي</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles spécifiques pour l'interface de Chat */
+        .chat-wrapper {
+            max-width: 800px;
+            width: 100%;
+            height: 65vh;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin: 20px auto 0 auto;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Zone des messages */
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Scrollbar stylisée */
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        /* Bulles de message */
+        .message {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Message de l'utilisateur (à droite en arabe, donc ici aligné à gauche visuellement ou selon le dir) */
+        .message.user {
+            background: linear-gradient(135deg, #33004F, #4c1d95);
+            color: white;
+            align-self: flex-start; /* S'aligne à droite en RTL */
+            border-bottom-right-radius: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Message du Bot (à gauche) */
+        .message.bot {
+            background: rgba(255, 255, 255, 0.07);
+            color: #e2e8f0;
+            align-self: flex-end; /* S'aligne à gauche en RTL */
+            border-bottom-left-radius: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Indicateur de chargement */
+        .message.loading {
+            background: rgba(255, 255, 255, 0.03);
+            color: #94a3b8;
+            font-style: italic;
+            align-self: flex-end;
+        }
+
+        /* Zone d'input text */
+        .chat-input-area {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: #a78bfa;
+        }
+
+        .chat-submit {
+            background: linear-gradient(135deg, #7c3aed, #33004F);
+            color: white;
+            border: none;
+            padding: 0 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-weight: bold;
+        }
+
+        .chat-submit:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bulla-container">
+        <div class="bubble bubble-1"></div>
+        <div class="bubble bubble-2"></div>
+    </div>
+
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="logo.png" alt="AstraPlayers" class="site-logo">
+            </div>
+            <nav class="nav-links">
+                <a href="index.html">الرئيسية</a>
+                <a href="videos.html">الفيديوهات</a>
+                <a href="games.html">ألعابنا</a>
+                <a href="links.html">روابطنا</a>
+                <a href="IA.html">ذكاء اصطناعي</a>
+                <a href="contact.html">تواصل معنا</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content-area" style="padding-top: 100px;">
+        <h1 style="text-align: center; margin-bottom: 5px;">AstraBot 🤖</h1>
+        <p style="text-align: center; color: #cbd5e1; margin-bottom: 15px;">اسأل ذكاء أسترا بلايرز الاصطناعي أي شيء!</p>
+
+        <div class="chat-wrapper">
+            <div class="chat-container" id="chatContainer">
+                <div class="message bot">
+                    مرحباً بك في AstraBot! أنا المساعد الذكي الخاص بـ AstraPlayers. كيف يمكنني مساعدتك اليوم؟ 🎮
+                </div>
+            </div>
+            
+            <form class="chat-input-area" id="chatForm">
+                <input type="text" id="userInput" class="chat-input" placeholder="اكتب رسالتك هنا..." autocomplete="off" required>
+                <button type="submit" class="chat-submit">إرسال</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>جميع الحقوق محفوظة © 2026 | AstraPlayersOff_FRF</p>
+    </footer>
+
+    <script>
+        // Récupération de la clé API depuis la mémoire du navigateur (localStorage)
+        let API_KEY = localStorage.getItem('astrabot_key');
+        
+        // Si aucune clé n'est enregistrée, on la demande proprement à l'utilisateur
+        if (!API_KEY) {
+            API_KEY = prompt("🔑 Entrez votre clé API Gemini pour activer le chat d'AstraBot :");
+            if (API_KEY) {
+                localStorage.setItem('astrabot_key', API_KEY.trim());
+            }
+        }
+
+        const chatContainer = document.getElementById('chatContainer');
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+
+        // Fonction pour ajouter une bulle de message à l'écran
+        function appendMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            messageDiv.innerText = text;
+            chatContainer.appendChild(messageDiv);
+            
+            // Scroll automatique vers le bas
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return messageDiv;
+        }
+
+        // Gestion de l'envoi du formulaire
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!API_KEY) {
+                alert("⚠️ Erreur : Vous devez entrer une clé API valide pour utiliser le bot.");
+                // Redemande la clé si elle est manquante
+                API_KEY = prompt("🔑 Entrez votre clé API Gemini :");
+                if (API_KEY) localStorage.setItem('astrabot_key', API_KEY.trim());
+                return;
+            }
+            
+            const messageText = userInput.value.trim();
+            if (!messageText) return;
+
+            // 1. Afficher le message de l'utilisateur
+            appendMessage(messageText, 'user');
+            userInput.value = '';
+
+            // 2. Afficher la bulle de chargement pour le Bot
+            const loadingBubble = appendMessage('جاري التفكير...', 'loading');
+
+            // L'URL de l'API construite dynamiquement en mémoire vive
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+            // 3. Préparer la requête asynchrone pour l'API Gemini
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Tu es AstraBot, un assistant IA intelligent et amical pour la communauté gaming "AstraPlayers". Réponds de manière concise, cool et directement en langue arabe à la demande suivante : ${messageText}`
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Erreur lors de la communication avec l'API");
+                }
+
+                const data = await response.json();
+                
+                // Supprimer l'indicateur de chargement
+                loadingBubble.remove();
+
+                // Extraire le texte de la réponse de Gemini
+                const botResponse = data.candidates[0].content.parts[0].text;
+
+                // 4. Afficher la réponse du Bot
+                appendMessage(botResponse, 'bot');
+
+            } catch (error) {
+                console.error("Erreur:", error);
+                loadingBubble.remove();
+                appendMessage("عذراً، حدث خطأ أثناء الاتصال بالخادم. تأكد من صحة مفتاح الـ API الخاص بك.", 'bot');
+            }
+        });
+    </script>
+</body>
+</html>
