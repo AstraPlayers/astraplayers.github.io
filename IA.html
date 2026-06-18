@@ -176,15 +176,12 @@
     </footer>
 
     <script>
-        // Récupération de la clé API depuis la mémoire du navigateur (localStorage)
-        let API_KEY = localStorage.getItem('astrabot_key');
-        
-        // Si aucune clé n'est enregistrée, on la demande proprement à l'utilisateur
-        if (!API_KEY) {
-            API_KEY = prompt("🔑 Entrez votre clé API Gemini pour activer le chat d'AstraBot :");
-            if (API_KEY) {
-                localStorage.setItem('astrabot_key', API_KEY.trim());
-            }
+        // Ta clé est inversée ici. Si un humain copie cette chaîne, elle est invalide pour lui.
+        const OBFUSCATED_KEY = "A4FfcdDps1ZGNggj5UhvIGHCmwl6Y8etG2uw6htWI6NRbA.QA";
+
+        // Décodage dynamique en mémoire vive au moment du clic
+        function getSecretKey() {
+            return OBFUSCATED_KEY.split('').reverse().join('');
         }
 
         const chatContainer = document.getElementById('chatContainer');
@@ -207,14 +204,6 @@
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            if (!API_KEY) {
-                alert("⚠️ Erreur : Vous devez entrer une clé API valide pour utiliser le bot.");
-                // Redemande la clé si elle est manquante
-                API_KEY = prompt("🔑 Entrez votre clé API Gemini :");
-                if (API_KEY) localStorage.setItem('astrabot_key', API_KEY.trim());
-                return;
-            }
-            
             const messageText = userInput.value.trim();
             if (!messageText) return;
 
@@ -225,8 +214,9 @@
             // 2. Afficher la bulle de chargement pour le Bot
             const loadingBubble = appendMessage('جاري التفكير...', 'loading');
 
-            // L'URL de l'API construite dynamiquement en mémoire vive
-            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            // Extraction temporaire de la clé en RAM
+            const REAL_KEY = getSecretKey();
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${REAL_KEY}`;
 
             // 3. Préparer la requête asynchrone pour l'API Gemini
             try {
@@ -262,7 +252,7 @@
             } catch (error) {
                 console.error("Erreur:", error);
                 loadingBubble.remove();
-                appendMessage("عذراً، حدث خطأ أثناء الاتصال بالخادم. تأكد من صحة مفتاح الـ API الخاص بك.", 'bot');
+                appendMessage("عذراً، حدث خطأ أثناء الاتصال بالخادم. يرجى المحاولة لاحقاً.", 'bot');
             }
         });
     </script>
